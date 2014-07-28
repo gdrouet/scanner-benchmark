@@ -50,7 +50,7 @@ public class JmhBenchmark {
     /**
      * Scanned annotation.
      */
-    private static final Class ANNOTATION =  Configuration.class;
+    private static final Class<? extends Annotation> ANNOTATION =  Configuration.class;
 
     /**
      * Package.
@@ -65,7 +65,7 @@ public class JmhBenchmark {
      * @throws Exception if test fails
      */
     @Benchmark
-    public void scanSubtypeWithAnnotationDetector() throws Exception {
+    public void scanAnnotatedTypeAnnotationDetector() throws Exception {
         final AtomicInteger count = new AtomicInteger(0);
         final AnnotationDetector.TypeReporter typeReporter = new AnnotationDetector.TypeReporter() {
             @Override
@@ -82,20 +82,17 @@ public class JmhBenchmark {
 
         final AnnotationDetector cf = new AnnotationDetector(typeReporter);
         cf.detect(PACKAGE);
-
-        LOGGER.info("Annotation detector count: " + count.get());
+        LOGGER.info("{} classes annotated with {} retrieved with Annotation-Detector", count.get(), ANNOTATION.getName());
     }
 
     /**
      * <p>
      * Looking for type annotated with an annotation with Reflections.
      * </p>
-     *
-     * @throws Exception if test fails
      */
     @Benchmark
-    public void scanSubtypeWithReflections() {
-        Collection<Class<?>> r = new Reflections(ClasspathHelper.forPackage(PACKAGE)).getTypesAnnotatedWith(ANNOTATION);
-        LOGGER.info("Reflections count:" + r.size());
+    public void scanAnnotatedTypeWithReflections() {
+        final Collection<Class<?>> r = new Reflections(ClasspathHelper.forPackage(PACKAGE)).getTypesAnnotatedWith(ANNOTATION);
+        LOGGER.info("{} classes annotated with {} retrieved with Reflections", r.size(), ANNOTATION.getName());
     }
 }
