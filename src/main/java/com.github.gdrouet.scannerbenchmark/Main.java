@@ -43,7 +43,7 @@ public class Main {
     public static void main(final String[] args) throws Exception {
         final Options opt = new OptionsBuilder()
                 .include(".*" + JmhBenchmark.class.getSimpleName() + ".*")
-                .forks(0)
+                .forks(1)
                 .warmupIterations(5)
                 .measurementIterations(5)
                 .threads(4)
