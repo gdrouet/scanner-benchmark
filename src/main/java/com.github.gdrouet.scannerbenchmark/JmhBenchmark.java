@@ -31,10 +31,14 @@ import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -65,7 +69,7 @@ public class JmhBenchmark {
      * @throws Exception if test fails
      */
     @Benchmark
-    public void scanAnnotatedTypeAnnotationDetector() throws Exception {
+    public void scanAnnotatedTypeWithAnnotationDetector() throws Exception {
         final AtomicInteger count = new AtomicInteger(0);
         final AnnotationDetector.TypeReporter typeReporter = new AnnotationDetector.TypeReporter() {
             @Override
@@ -94,5 +98,18 @@ public class JmhBenchmark {
     public void scanAnnotatedTypeWithReflections() {
         final Collection<Class<?>> r = new Reflections(ClasspathHelper.forPackage(PACKAGE)).getTypesAnnotatedWith(ANNOTATION);
         LOGGER.info("{} classes annotated with {} retrieved with Reflections", r.size(), ANNOTATION.getName());
+    }
+
+    /**
+     * <p>
+     * Looking for type annotated with an annotation with Spring.
+     * </p>
+     */
+    @Benchmark
+    public void scanAnnotatedTypeWithSpring() {
+        final ClassPathScanningCandidateComponentProvider s = new ClassPathScanningCandidateComponentProvider(false);
+        s.addIncludeFilter(new AnnotationTypeFilter(ANNOTATION));
+        final Set<BeanDefinition> r = s.findCandidateComponents(PACKAGE);
+        LOGGER.info("{} classes annotated with {} retrieved with Spring", r.size(), ANNOTATION.getName());
     }
 }
