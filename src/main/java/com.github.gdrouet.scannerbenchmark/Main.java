@@ -35,7 +35,27 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 public class Main {
 
     /**
-     * Executes benchmark with 5 warmup iterations, 5 measurements, 0 fork and 4 threads.
+     * Number of forks.
+     */
+    private static final int FORKS = 1;
+
+    /**
+     * Number of warmup iterations.
+     */
+    private static final int WARMUP_ITERATIONS = 5;
+
+    /**
+     * Number of measurement iterations.
+     */
+    private static final int MEASUREMENT_ITERATIONS = 5;
+
+    /**
+     * Number of threads.
+     */
+    private static final int THREADS = 4;
+
+    /**
+     * Executes benchmark with ${@link #WARMUP_ITERATIONS}, {@link #MEASUREMENT_ITERATIONS}, {@link #FORKS} and {@link #THREADS}.
      *
      * @param args args
      * @throws Exception if test fails
@@ -43,10 +63,10 @@ public class Main {
     public static void main(final String[] args) throws Exception {
         final Options opt = new OptionsBuilder()
                 .include(".*" + JmhBenchmark.class.getSimpleName() + ".*")
-                .forks(1)
-                .warmupIterations(5)
-                .measurementIterations(5)
-                .threads(4)
+                .forks(FORKS)
+                .warmupIterations(WARMUP_ITERATIONS)
+                .measurementIterations(MEASUREMENT_ITERATIONS)
+                .threads(THREADS)
                 .build();
 
         new Runner(opt).run();
